@@ -9,11 +9,12 @@ server.on("connection", (socket) => {
     clients.add(socket);
     socket.on('message', (message) => {
         console.log(`Received message: ${message}`);
-        socket.send(`You said: ${message}`);
+        const text = Buffer.isBuffer(message) ? message.toString('utf8') : message;
+        socket.send(text);
         
-        for (client of clients) {
+        for (const client of clients) {
             if (client !== socket && client.readyState === WebSocket.OPEN){
-                client.send(`Other said: ${message}`);
+                client.send(message.toString());
             }
         }
     });
